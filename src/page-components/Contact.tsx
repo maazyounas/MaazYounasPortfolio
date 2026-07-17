@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Layout from "../components/layout/Layout";
 import { Mail, MapPin, Phone, CheckCircle, Clock, Calendar } from "lucide-react";
@@ -9,7 +10,10 @@ import { adminService, ContactPageData } from "../lib/adminService";
 import { sanitizeClientInput, validateContactForm } from "../lib/client/validation";
 import ContactHeader from "./contact/ContactHeader";
 import ContactInfoList from "./contact/ContactInfoList";
-import ContactForm from "./contact/ContactForm";
+
+const ContactForm = dynamic(() => import("./contact/ContactForm"), {
+  ssr: false,
+});
 
 interface ContactProps {
   initialData: ContactPageData | null;

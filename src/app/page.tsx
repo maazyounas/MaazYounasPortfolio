@@ -1,10 +1,7 @@
 import { Metadata } from "next";
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
-import ServicesSection from "@/components/section/ServicesSection";
-import AboutSection from "@/page-components/About";
-import ContactSection from "@/page-components/Contact";
-import ProjectsSection from "@/page-components/Projects";
+import DeferredHomeSections from "@/components/home/DeferredHomeSections";
 import { HomePageData } from "@/features/home";
 import { AboutPageData } from "@/features/about";
 import { ContactPageData } from "@/features/contact";
@@ -108,10 +105,11 @@ export default async function Page() {
       <div id="home" className="scroll-mt-28">
         <HeroSection initialHomeData={homeData} initialQuotes={quotes} />
       </div>
-      <ServicesSection />
-      <AboutSection initialData={aboutData} standalone={false} sectionId="about" />
-      <ProjectsSection initialProjects={projects} standalone={false} sectionId="projects" />
-      <ContactSection initialData={contactData} standalone={false} sectionId="contact" />
+      <DeferredHomeSections
+        aboutData={aboutData}
+        contactData={contactData}
+        projects={projects}
+      />
     </Layout>
   );
 }

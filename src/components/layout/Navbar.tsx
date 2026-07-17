@@ -171,13 +171,11 @@ const Navbar = () => {
   return (
     <>
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@400;500;600&display=swap");
-
         .syne {
-          font-family: "Syne", sans-serif;
+          font-family: var(--font-syne), sans-serif;
         }
         .outfit {
-          font-family: "Outfit", sans-serif;
+          font-family: var(--font-outfit), sans-serif;
         }
 
         /* Add scroll margin to all sections for better scroll targeting */

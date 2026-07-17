@@ -1,12 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import * as FaIcons from "react-icons/fa";
-import * as SiIcons from "react-icons/si";
-import * as DiIcons from "react-icons/di";
-import * as TbIcons from "react-icons/tb";
-
-const AllIcons = { ...FaIcons, ...SiIcons, ...DiIcons, ...TbIcons };
+import { getIconComponent, type IconComponentType } from "../admin/about/iconUtils";
 
 interface TechStackIconProps {
   name: string;
@@ -14,12 +10,23 @@ interface TechStackIconProps {
   index: number;
 }
 
-const getIconComponent = (iconName: string) => {
-  return AllIcons[iconName as keyof typeof AllIcons]; // returns React component
-};
-
 const TechStackIcon = ({ name, icon, index }: TechStackIconProps) => {
-  const IconComponent = getIconComponent(icon);
+  const [ResolvedIconComponent, setResolvedIconComponent] = useState<IconComponentType | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    setResolvedIconComponent(null);
+
+    getIconComponent(icon).then((component) => {
+      if (active && component) {
+        setResolvedIconComponent(() => component);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [icon]);
 
   return (
     <motion.div
@@ -54,8 +61,8 @@ const TechStackIcon = ({ name, icon, index }: TechStackIconProps) => {
                         transition-opacity duration-500"
         />
 
-        {IconComponent ? (
-          <IconComponent className="w-8 h-8 text-white group-hover:text-primary" />
+        {ResolvedIconComponent ? (
+          <ResolvedIconComponent className="w-8 h-8 text-white group-hover:text-primary" />
         ) : (
           <span className="text-xs text-red-400">?</span>
         )}

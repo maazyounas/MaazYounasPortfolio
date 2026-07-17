@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Syne, Outfit } from "next/font/google";
 import { Metadata, Viewport } from "next";
 import { getMetadataForPage, generateCanonicalUrl, generateStructuredData, pageMetadata, defaultMetadata } from "@/lib/seo/metadata";
 import { generateOpenGraphMetadata } from "@/lib/seo/og";
@@ -9,20 +8,6 @@ import connectDB from "@/lib/server/db";
 import GlobalSettings from "@/models/GlobalSettings";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://maazyounas.dev";
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-syne",
-  display: "swap",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-outfit",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -140,7 +125,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   });
 
   return (
-    <html lang="en" className={`${syne.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
 
         {/* DNS prefetch for external resources */}

@@ -1,6 +1,11 @@
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Plus, Search, X } from "lucide-react";
 import { AboutPageData } from "../../../lib/adminService";
-import { AllIcons, getIconComponent } from "./iconUtils";
+import {
+  getIconComponent,
+  loadAllIcons,
+  type IconComponentType,
+} from "./iconUtils";
 
 interface TechItem {
   name: string;
@@ -40,10 +45,55 @@ const AboutTechStackSection = ({
   onAddTech,
   onRemoveTech,
 }: AboutTechStackSectionProps) => {
-  const allIcons = Object.entries(AllIcons);
+  const [allIcons, setAllIcons] = useState<[string, IconComponentType][]>([]);
+  const [loadingIcons, setLoadingIcons] = useState(false);
+
+  useEffect(() => {
+    if (!expanded && !showIconPicker) return;
+
+    let active = true;
+    setLoadingIcons(true);
+
+    loadAllIcons()
+      .then((icons) => {
+        if (!active) return;
+        setAllIcons(Object.entries(icons) as [string, IconComponentType][]);
+      })
+      .finally(() => {
+        if (active) setLoadingIcons(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [expanded, showIconPicker]);
+
   const filteredIcons = allIcons.filter(([iconName]) =>
     iconName.toLowerCase().includes(iconQuery.toLowerCase()),
   );
+
+  const DynamicIcon = ({ iconName }: { iconName: string }) => {
+    const [ResolvedIconComponent, setResolvedIconComponent] =
+      useState<IconComponentType | null>(null);
+
+    useEffect(() => {
+      let active = true;
+      setResolvedIconComponent(null);
+
+      getIconComponent(iconName).then((icon) => {
+        if (active && icon) {
+          setResolvedIconComponent(() => icon);
+        }
+      });
+
+      return () => {
+        active = false;
+      };
+    }, [iconName]);
+
+    if (!ResolvedIconComponent) return null;
+    return <ResolvedIconComponent className="w-5 h-5" />;
+  };
 
   return (
     <div className="bg-gray-800 rounded-lg border border-gray-700">
@@ -95,13 +145,7 @@ const AboutTechStackSection = ({
                     <div className="flex items-center gap-3">
                       {selectedIcon && (
                         <div className="text-blue-400">
-                          {(() => {
-                            const IconComponent =
-                              getIconComponent(selectedIcon);
-                            return IconComponent ? (
-                              <IconComponent className="w-5 h-5" />
-                            ) : null;
-                          })()}
+                          <DynamicIcon iconName={selectedIcon} />
                         </div>
                       )}
                       <span className="text-gray-300">
@@ -127,25 +171,31 @@ const AboutTechStackSection = ({
                       </div>
 
                       <div className="overflow-y-auto max-h-64">
-                        <div className="grid grid-cols-8 gap-2 p-3">
-                          {filteredIcons.slice(0, 96).map(([iconName, Icon]) => (
-                            <button
-                              key={iconName}
-                              onClick={() => {
-                                onChangeSelectedIcon(iconName);
-                                onToggleIconPicker();
-                              }}
-                              className={`p-2 rounded flex items-center justify-center transition-colors ${
-                                selectedIcon === iconName
-                                  ? "bg-blue-900/30 border border-blue-700"
-                                  : "bg-gray-900 hover:bg-gray-700 border border-transparent"
-                              }`}
-                              title={iconName}
-                            >
-                              <Icon className="w-4 h-4 text-gray-300" />
-                            </button>
-                          ))}
-                        </div>
+                        {loadingIcons ? (
+                          <div className="p-3 text-sm text-gray-500">
+                            Loading icons...
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-8 gap-2 p-3">
+                            {filteredIcons.slice(0, 96).map(([iconName, Icon]) => (
+                              <button
+                                key={iconName}
+                                onClick={() => {
+                                  onChangeSelectedIcon(iconName);
+                                  onToggleIconPicker();
+                                }}
+                                className={`p-2 rounded flex items-center justify-center transition-colors ${
+                                  selectedIcon === iconName
+                                    ? "bg-blue-900/30 border border-blue-700"
+                                    : "bg-gray-900 hover:bg-gray-700 border border-transparent"
+                                }`}
+                                title={iconName}
+                              >
+                                <Icon className="w-4 h-4 text-gray-300" />
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -179,7 +229,6 @@ const AboutTechStackSection = ({
             {formData.techStack.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {formData.techStack.map((tech, index) => {
-                  const IconComponent = getIconComponent(tech.icon);
                   return (
                     <div
                       key={`${tech.name}-${index}`}
@@ -188,9 +237,7 @@ const AboutTechStackSection = ({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="text-blue-400">
-                            {IconComponent && (
-                              <IconComponent className="w-5 h-5" />
-                            )}
+                            <DynamicIcon iconName={tech.icon} />
                           </div>
                           <div className="text-left">
                             <div className="font-medium text-white text-sm">

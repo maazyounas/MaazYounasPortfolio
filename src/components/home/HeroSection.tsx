@@ -206,8 +206,6 @@ const HeroSection = ({ initialHomeData, initialQuotes }: HeroSectionProps) => {
   return (
     <>
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap");
-
         @keyframes hero-orb-drift {
           0%,
           100% {

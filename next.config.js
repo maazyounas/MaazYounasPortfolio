@@ -1,3 +1,5 @@
+import bundleAnalyzer from "@next/bundle-analyzer";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Core performance optimizations
@@ -23,6 +25,8 @@ const nextConfig = {
       },
     ],
   },
+
+  
 
   // Headers for caching and security
   headers: async () => {
@@ -123,4 +127,11 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default withBundleAnalyzer({
+  ...nextConfig,
+  reactStrictMode: true,
+});

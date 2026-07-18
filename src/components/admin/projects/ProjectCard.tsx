@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { ExternalLink, Github, Pencil, Star, Trash2 } from "lucide-react";
 import { Project } from "../../../lib/adminService";
 
@@ -30,12 +31,12 @@ const ProjectCard = ({ project, onEdit, onDelete, onToggleFeatured }: ProjectCar
     >
       <div className="p-4 flex flex-col h-full">
         <div className="flex-shrink-0 mb-4">
-          <div className="relative">
-            <img
-              src={project.image}
+          <div className="relative h-40">
+            <Image
+              src={project.image || "/placeholder.svg"}
               alt={project.title}
-              className="w-full h-40 rounded-lg object-cover"
-              loading="lazy"
+              fill
+              className="rounded-lg object-cover"
             />
             <div className="absolute top-2 right-2">
               {project.featured && (

@@ -10,8 +10,9 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import CodeBubbles from "../effects/CodeBubbles";
-import ParticlesBackground from "../effects/ParticlesBackground";
+import dynamic from "next/dynamic";
+const CodeBubbles = dynamic(() => import("../effects/CodeBubbles"));
+const ParticlesBackground = dynamic(() => import("../effects/ParticlesBackground"));
 import { HomePageData } from "../../lib/adminService";
 
 /* ──────────────────────────────────────────────────────────

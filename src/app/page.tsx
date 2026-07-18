@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
-import DeferredHomeSections from "@/components/home/DeferredHomeSections";
+import dynamic from "next/dynamic";
+
+const DeferredHomeSections = dynamic(() => import("@/components/home/DeferredHomeSections"));
 import { HomePageData } from "@/features/home";
 import { AboutPageData } from "@/features/about";
 import { ContactPageData } from "@/features/contact";
@@ -14,7 +16,7 @@ import Home from "@/models/Home";
 import Project from "@/models/Project";
 import Quote from "@/models/Quote";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // 1 hour ISR
 
 const baseMeta = getMetadataForPage("home");
 

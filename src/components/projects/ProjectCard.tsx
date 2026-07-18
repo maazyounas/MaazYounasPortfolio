@@ -1,4 +1,5 @@
 
+import Image from "next/image";
 import { ExternalLink, Github, ArrowUpRight, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import TiltCard from "../ui/TiltCard";
@@ -74,10 +75,12 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
             className="relative h-44 sm:h-48 flex-shrink-0 overflow-hidden"
             style={{ background: "rgba(239,68,68,0.05)" }}
           >
-            <img
-              src={project.image}
+            <Image
+              src={project.image || "/placeholder.svg"}
               alt={project.title}
-              className="w-full h-full object-cover sm:will-change-transform"
+              fill
+              className="object-cover sm:will-change-transform"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
 
             {/* gradient overlay */}

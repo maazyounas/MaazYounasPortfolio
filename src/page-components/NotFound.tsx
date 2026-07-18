@@ -4,7 +4,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Home, ArrowLeft, AlertCircle, Search } from "lucide-react";
-import ParticlesBackground from "../components/effects/ParticlesBackground";
+import dynamic from "next/dynamic";
+
+const ParticlesBackground = dynamic(() => import("../components/effects/ParticlesBackground"), { ssr: false });
 
 const NotFound = () => {
   const pathname = usePathname();

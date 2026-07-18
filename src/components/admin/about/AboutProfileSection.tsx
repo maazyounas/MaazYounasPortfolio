@@ -1,4 +1,5 @@
 import type React from "react";
+import Image from "next/image";
 import { ChevronDown, ChevronUp, Upload } from "lucide-react";
 import { AboutPageData } from "../../../lib/adminService";
 
@@ -39,11 +40,14 @@ const AboutProfileSection = ({
               <div className="relative group">
                 <div className="w-40 h-40 rounded-full overflow-hidden border-2 border-gray-700 bg-gray-900 shadow-xl">
                   {formData.profileImage ? (
-                    <img
-                      src={formData.profileImage}
-                      alt="Profile"
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                    />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={formData.profileImage}
+                        alt="Profile"
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-600">
                       <Upload className="w-8 h-8" />

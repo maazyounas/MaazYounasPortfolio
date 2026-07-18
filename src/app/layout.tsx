@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Metadata, Viewport } from "next";
-import { Poppins, Syne, Outfit } from "next/font/google";
+import Script from "next/script";
+import { Syne, Outfit } from "next/font/google";
 import { getMetadataForPage, generateCanonicalUrl, generateStructuredData, pageMetadata, defaultMetadata } from "@/lib/seo/metadata";
 import { generateOpenGraphMetadata } from "@/lib/seo/og";
 import "./globals.css";
@@ -8,12 +9,6 @@ import Providers from "./providers";
 import connectDB from "@/lib/server/db";
 import GlobalSettings from "@/models/GlobalSettings";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
-});
 
 const syne = Syne({
   subsets: ["latin"],
@@ -146,7 +141,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   });
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${syne.variable} ${outfit.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${syne.variable} ${outfit.variable}`}>
       <head>
 
         {/* DNS prefetch for external resources */}
@@ -162,8 +157,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* Monitoring and Analytics (will be configured in .env) */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
-            <script
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="lazyOnload"
+            />
+            <Script
+              id="google-analytics"
+              strategy="lazyOnload"
               dangerouslySetInnerHTML={{
                 __html: `
                   window.dataLayer = window.dataLayer || [];

@@ -1,12 +1,8 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Layout from "../components/layout/Layout";
 import TechStackIcon from "../components/about/TechStackIcon";
 import { Code2, Database, UserCircle, MapPin, Calendar } from "lucide-react";
-import { adminService, AboutPageData } from "../lib/adminService";
+import { AboutPageData } from "../lib/adminService";
 
 interface AboutProps {
   initialData: AboutPageData | null;
@@ -15,27 +11,11 @@ interface AboutProps {
 }
 
 const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
-  const [aboutData, setAboutData] = useState<AboutPageData | null>(initialData);
-  const [loading, setLoading] = useState(!initialData);
-
-  useEffect(() => {
-    if (initialData) return;
-    const fetchData = async () => {
-      try {
-        const data = await adminService.getAboutPageData();
-        setAboutData(data);
-      } catch (error) {
-        console.error("Failed to fetch about page data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [initialData]);
+  const aboutData = initialData;
 
   const content = (
     <>
-      <style jsx global>{`
+      <style>{`
         @keyframes ring-spin {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
@@ -94,17 +74,11 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
 
         <div className="container-responsive relative z-10">
 
-
           {/* ── Two-column: image + content ───────────── */}
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20 sm:mb-28">
 
             {/* LEFT — Avatar ──────────────────────────── */}
-            <motion.div
-              initial={{ opacity: 0, x: -48 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex justify-center"
-            >
+            <div className="flex justify-center">
               <div className="relative w-full max-w-xs sm:max-w-sm">
 
                 {/* Spinning conic ring */}
@@ -181,10 +155,7 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                 </div>
 
                 {/* Location pill */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
+                <div
                   className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-full font-body text-xs whitespace-nowrap z-20"
                   style={{
                     background: "rgba(7,7,10,0.92)",
@@ -194,17 +165,12 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                 >
                   <MapPin className="w-3 h-3" style={{ color: "#ef4444" }} />
                   Pakistan · Remote Worldwide
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* RIGHT — Content ────────────────────────── */}
-            <motion.div
-              initial={{ opacity: 0, x: 48 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col"
-            >
+            <div className="flex flex-col">
               <h1 className="font-display font-bold text-metallic-animated mb-4 break-words"
                 style={{ fontSize: "clamp(2rem,5vw,3rem)" }}
               >
@@ -268,21 +234,14 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                   { value: "3+",  label: "Years Experience" },
                   { value: "15+", label: "Projects Completed" },
                   { value: "15+", label: "Happy Clients" },
-                ].map((stat, index) => (
-                  <motion.div
+                ].map((stat) => (
+                  <div
                     key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex flex-col items-center text-center p-3 sm:p-4 rounded-xl"
+                    className="flex flex-col items-center text-center p-3 sm:p-4 rounded-xl transition-all duration-300 hover:border-red-500/50"
                     style={{
                       background: "rgba(7,7,10,0.7)",
                       border: "1px solid rgba(239,68,68,0.2)",
                       boxShadow: "0 4px 16px rgba(0,0,0,0.35)",
-                    }}
-                    whileHover={{
-                      borderColor: "rgba(239,68,68,0.5)",
-                      boxShadow: "0 0 20px rgba(239,68,68,0.12)",
                     }}
                   >
                     <span
@@ -301,19 +260,14 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                     >
                       {stat.label}
                     </span>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* ── Tech Stack ────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 48 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div>
             {/* Tech stack header */}
             <div className="text-center mb-10">
               <h2
@@ -358,7 +312,7 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                 ))
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </>

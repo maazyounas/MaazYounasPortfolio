@@ -1,6 +1,4 @@
-"use client";
 
-import { motion } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import TiltCard from "../ui/TiltCard";
@@ -29,17 +27,7 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
   const remainingTech = project.tech.length - 3;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 48 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.09,
-        type: "spring",
-        stiffness: 80,
-      }}
-      viewport={{ once: true, margin: "-50px" }}
-      whileHover={{ y: -8 }}
+    <div
       className="h-full cursor-pointer group"
       onClick={handleCardClick}
     >
@@ -68,14 +56,7 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
           {/* ── Featured badge ──────────────────────── */}
           {project.featured && (
             <div className="absolute top-3 left-3 z-20">
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{
-                  delay: index * 0.1 + 0.3,
-                  type: "spring",
-                  stiffness: 200,
-                }}
+              <div
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-body text-[10px] sm:text-xs font-semibold text-white"
                 style={{
                   background: "linear-gradient(135deg,#ef4444,#be123c)",
@@ -84,7 +65,7 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
               >
                 <Star className="w-2.5 h-2.5 fill-current" />
                 Featured
-              </motion.div>
+              </div>
             </div>
           )}
 
@@ -93,12 +74,10 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
             className="relative h-44 sm:h-48 flex-shrink-0 overflow-hidden"
             style={{ background: "rgba(239,68,68,0.05)" }}
           >
-            <motion.img
+            <img
               src={project.image}
               alt={project.title}
-              whileHover={{ scale: 1.12 }}
               className="w-full h-full object-cover sm:will-change-transform"
-              transition={{ duration: 0.55, ease: "easeOut" }}
             />
 
             {/* gradient overlay */}
@@ -112,22 +91,17 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
             />
 
             {/* Hover action buttons */}
-            <motion.div
+            <div
               className="action-button absolute inset-0 flex items-center justify-center gap-3 sm:backdrop-blur-md"
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              transition={{ duration: 0.25 }}
               style={{ background: "rgba(4,4,6,0.88)" }}
               onClick={(e) => e.stopPropagation()}
             >
               {project.showLink && project.link && (
-                <motion.a
+                <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => { e.stopPropagation(); handleView(); }}
-                  whileHover={{ scale: 1.08, y: -3 }}
-                  whileTap={{ scale: 0.96 }}
                   className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-body text-xs sm:text-sm font-medium text-white"
                   style={{
                     background: "linear-gradient(135deg,#ef4444,#be123c)",
@@ -136,17 +110,15 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
                 >
                   <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   Live Demo
-                </motion.a>
+                </a>
               )}
 
               {project.showGithub && project.github && (
-                <motion.a
+                <a
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => { e.stopPropagation(); handleView(); }}
-                  whileHover={{ scale: 1.08, y: -3 }}
-                  whileTap={{ scale: 0.96 }}
                   className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-body text-xs sm:text-sm font-medium transition-all duration-200"
                   style={{
                     background: "rgba(7,7,10,0.9)",
@@ -166,21 +138,20 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
                 >
                   <Github className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   Code
-                </motion.a>
+                </a>
               )}
-            </motion.div>
+            </div>
 
             {/* Corner arrow */}
-            <motion.div
+            <div
               className="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 sm:p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300"
               style={{
                 background: "rgba(7,7,10,0.88)",
                 border: "1px solid rgba(239,68,68,0.3)",
               }}
-              whileHover={{ scale: 1.1, rotate: 45 }}
             >
               <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#ef4444" }} />
-            </motion.div>
+            </div>
           </div>
 
           {/* ── Content ─────────────────────────────── */}
@@ -229,16 +200,8 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
             >
               <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden flex-wrap">
                 {visibleTech.map((tech, techIndex) => (
-                  <motion.span
+                  <span
                     key={tech}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.3,
-                      delay: index * 0.1 + techIndex * 0.05,
-                    }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: 1.06, y: -2 }}
                     className="px-2 sm:px-2.5 py-1 font-body text-[10px] sm:text-xs rounded-lg cursor-default whitespace-nowrap font-medium transition-all duration-250"
                     style={{
                       background: "rgba(239,68,68,0.08)",
@@ -259,15 +222,10 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
                     }}
                   >
                     {tech}
-                  </motion.span>
+                  </span>
                 ))}
                 {remainingTech > 0 && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 + 0.2 }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: 1.06 }}
+                  <span
                     className="px-2 sm:px-2.5 py-1 font-body text-[10px] sm:text-xs rounded-lg whitespace-nowrap font-semibold"
                     style={{
                       background: "rgba(239,68,68,0.14)",
@@ -276,7 +234,7 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
                     }}
                   >
                     +{remainingTech}
-                  </motion.span>
+                  </span>
                 )}
               </div>
             </div>
@@ -301,7 +259,7 @@ const ProjectCard = ({ project, index, pinned }: ProjectCardProps) => {
           />
         </div>
       </TiltCard>
-    </motion.div>
+    </div>
   );
 };
 

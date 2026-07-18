@@ -1,11 +1,32 @@
 import { ReactNode } from "react";
 import { Metadata, Viewport } from "next";
+import { Poppins, Syne, Outfit } from "next/font/google";
 import { getMetadataForPage, generateCanonicalUrl, generateStructuredData, pageMetadata, defaultMetadata } from "@/lib/seo/metadata";
 import { generateOpenGraphMetadata } from "@/lib/seo/og";
 import "./globals.css";
 import Providers from "./providers";
 import connectDB from "@/lib/server/db";
 import GlobalSettings from "@/models/GlobalSettings";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-syne",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-outfit",
+});
+
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://maazyounas.dev";
 
@@ -125,7 +146,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   });
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${syne.variable} ${outfit.variable}`}>
       <head>
 
         {/* DNS prefetch for external resources */}

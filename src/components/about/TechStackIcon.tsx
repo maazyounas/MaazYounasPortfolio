@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getIconComponent, type IconComponentType } from "../admin/about/iconUtils";
+import { getIconAction } from "@/app/actions/getIcon";
+import React from "react";
 
 interface TechStackIconProps {
   name: string;
@@ -11,17 +12,21 @@ interface TechStackIconProps {
 }
 
 const TechStackIcon = ({ name, icon, index }: TechStackIconProps) => {
-  const [ResolvedIconComponent, setResolvedIconComponent] = useState<IconComponentType | null>(null);
+  const [IconNode, setIconNode] = useState<React.ReactNode | null>(null);
 
   useEffect(() => {
     let active = true;
-    setResolvedIconComponent(null);
+    setIconNode(null);
 
-    getIconComponent(icon).then((component) => {
-      if (active && component) {
-        setResolvedIconComponent(() => component);
-      }
-    });
+    getIconAction(icon)
+      .then((node) => {
+        if (active) {
+          setIconNode(node);
+        }
+      })
+      .catch(() => {
+        if (active) setIconNode(null);
+      });
 
     return () => {
       active = false;
@@ -61,10 +66,12 @@ const TechStackIcon = ({ name, icon, index }: TechStackIconProps) => {
                         transition-opacity duration-500"
         />
 
-        {ResolvedIconComponent ? (
-          <ResolvedIconComponent className="w-8 h-8 text-white group-hover:text-primary" />
+        {IconNode ? (
+          <div className="w-8 h-8 text-white group-hover:text-primary flex items-center justify-center">
+            {IconNode}
+          </div>
         ) : (
-          <span className="text-xs text-red-400">?</span>
+          <span className="w-8 h-8 flex items-center justify-center text-xs text-red-400">?</span>
         )}
       </motion.div>
 

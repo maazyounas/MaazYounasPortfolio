@@ -48,18 +48,12 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   let homeData: HomePageData | null = null;
-  let aboutData: AboutPageData | null = null;
-  let contactData: ContactPageData | null = null;
-  let projects: ProjectType[] = [];
   let quotes: string[] = [];
 
   try {
     await connectDB();
-    const [homeDataRaw, aboutDataRaw, contactDataRaw, projectsRaw, quotesDataRaw] = await Promise.all([
+    const [homeDataRaw, quotesDataRaw] = await Promise.all([
       Home.findOne().lean(),
-      About.findOne().lean(),
-      Contact.findOne().lean(),
-      Project.find().sort({ order: 1, createdAt: -1 }).lean(),
       Quote.find().lean(),
     ]);
 
@@ -69,32 +63,6 @@ export default async function Page() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       _id: String((homeDataRaw as any)._id)
     } : null) as unknown as HomePageData | null;
-
-    aboutData = aboutDataRaw ? {
-      tagline: aboutDataRaw.tagline || '',
-      shortIntro: aboutDataRaw.shortIntro || '',
-      bio: aboutDataRaw.bio || '',
-      profileImage: aboutDataRaw.profileImage || '',
-      techStack: (aboutDataRaw.techStack || []).map((tech: { name?: string; icon?: string }) => ({
-        name: tech.name || '',
-        icon: tech.icon || ''
-      })),
-      skills: []
-    } : null;
-
-    contactData = (contactDataRaw ? {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(contactDataRaw as any),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      _id: String((contactDataRaw as any)._id)
-    } : null) as unknown as ContactPageData | null;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    projects = projectsRaw.map((project: any) => ({
-      ...project,
-      id: String(project._id),
-      _id: String(project._id),
-    })) as ProjectType[];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     quotes = ((quotesDataRaw as any[]) || []).map((q) => q.text);
@@ -107,11 +75,7 @@ export default async function Page() {
       <div id="home" className="scroll-mt-28">
         <HeroSection initialHomeData={homeData} initialQuotes={quotes} />
       </div>
-      <DeferredHomeSections
-        aboutData={aboutData}
-        contactData={contactData}
-        projects={projects}
-      />
+      <DeferredHomeSections />
     </Layout>
   );
 }

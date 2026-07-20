@@ -31,17 +31,7 @@ const sectionFallback = (minHeight = "32rem") => (
   />
 );
 
-interface DeferredHomeSectionsProps {
-  aboutData: AboutPageData | null;
-  contactData: ContactPageData | null;
-  projects: ProjectType[];
-}
-
-const DeferredHomeSections = ({
-  aboutData,
-  contactData,
-  projects,
-}: DeferredHomeSectionsProps) => {
+const DeferredHomeSections = () => {
   return (
     <>
       <Suspense fallback={sectionFallback("28rem")}>
@@ -49,21 +39,21 @@ const DeferredHomeSections = ({
       </Suspense>
       <Suspense fallback={sectionFallback("40rem")}>
         <AboutSection
-          initialData={aboutData}
+          initialData={null}
           standalone={false}
           sectionId="about"
         />
       </Suspense>
       <Suspense fallback={sectionFallback("42rem")}>
         <ProjectsSection
-          initialProjects={projects}
+          initialProjects={[]}
           standalone={false}
           sectionId="projects"
         />
       </Suspense>
       <Suspense fallback={sectionFallback("42rem")}>
         <ContactSection
-          initialData={contactData}
+          initialData={null}
           standalone={false}
           sectionId="contact"
         />

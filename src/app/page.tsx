@@ -54,7 +54,7 @@ export default async function Page() {
     await connectDB();
     const [homeDataRaw, quotesDataRaw] = await Promise.all([
       Home.findOne().lean(),
-      Quote.find().lean(),
+      Quote.find().limit(5).lean(),
     ]);
 
     homeData = (homeDataRaw ? {

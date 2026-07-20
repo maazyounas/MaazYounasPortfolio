@@ -37,19 +37,9 @@ export const metadata: Metadata = {
 export default async function Page() {
   let data: ProjectType[] = [];
 
-  try {
-    await connectDB();
-    const projects = await Project.find().sort({ order: 1, createdAt: -1 }).lean();
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data = projects.map((p: any) => ({
-      ...p,
-      id: String(p._id),
-      _id: String(p._id),
-    })) as ProjectType[];
-  } catch (error) {
-    console.error("Projects Page Data Fetch Error:", error);
-  }
+  // Data fetching is deferred to the client component (lazy loading)
+  // to prevent large inline JSON payloads in the server response.
+  // The client will hit /api/projects on mount.
 
   const breadcrumbSchema = generateStructuredData("BreadcrumbList", {
     breadcrumbs: [

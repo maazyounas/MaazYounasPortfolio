@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 interface CodeBubble {
@@ -48,45 +47,58 @@ const CodeBubbles = () => {
   }, [windowSize.width, windowSize.height]);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-      {bubbles?.map((bubble) => (
-        <motion.div
-          key={bubble.id}
-          className="absolute flex items-center justify-center rounded-full"
-          style={{
-            left: bubble.startX,
-            top: bubble.startY,
-            width: bubble.size * 2.5,
-            height: bubble.size * 2.5,
-            fontSize: bubble.size,
-          }}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{
-            opacity: [0, 0.6, 0.6, 0],
-            scale: [0.5, 1, 1, 0.5],
-            y: [0, -bubble.size * 6, -bubble.size * 12, -bubble.size * 18],
-            x: [
-              0,
-              Math.sin(bubble.id) * 10,
-              Math.sin(bubble.id) * 20,
-              Math.sin(bubble.id) * 30,
-            ],
-            rotate: [0, 10, -10, 0],
-          }}
-          transition={{
-            duration: bubble.duration,
-            delay: bubble.delay,
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "easeInOut",
-          }}
-        >
-          <span className="text-primary font-mono font-bold drop-shadow-[0_0_8px_hsl(var(--primary)/0.8)]">
-            {bubble.text}
-          </span>
-        </motion.div>
-      ))}
-    </div>
+    <>
+      <style>{`
+        @keyframes css-bubble-anim {
+          0% {
+            transform: translate(0px, 0px) scale(0.5) rotate(0deg);
+            opacity: 0;
+          }
+          33% {
+            transform: translate(var(--x-1), var(--y-1)) scale(1) rotate(10deg);
+            opacity: 0.6;
+          }
+          66% {
+            transform: translate(var(--x-2), var(--y-2)) scale(1) rotate(-10deg);
+            opacity: 0.6;
+          }
+          100% {
+            transform: translate(var(--x-3), var(--y-3)) scale(0.5) rotate(0deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {bubbles?.map((bubble) => (
+          <div
+            key={bubble.id}
+            className="absolute flex items-center justify-center rounded-full"
+            style={{
+              left: bubble.startX,
+              top: bubble.startY,
+              width: bubble.size * 2.5,
+              height: bubble.size * 2.5,
+              fontSize: bubble.size,
+              
+              // CSS Variables for keyframes
+              "--x-1": `${Math.sin(bubble.id) * 10}px`,
+              "--x-2": `${Math.sin(bubble.id) * 20}px`,
+              "--x-3": `${Math.sin(bubble.id) * 30}px`,
+              "--y-1": `${-bubble.size * 6}px`,
+              "--y-2": `${-bubble.size * 12}px`,
+              "--y-3": `${-bubble.size * 18}px`,
+              
+              animation: `css-bubble-anim ${bubble.duration}s ease-in-out ${bubble.delay}s infinite`,
+              opacity: 0,
+            } as React.CSSProperties}
+          >
+            <span className="text-primary font-mono font-bold drop-shadow-[0_0_8px_hsl(var(--primary)/0.8)]">
+              {bubble.text}
+            </span>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

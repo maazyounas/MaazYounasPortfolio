@@ -2,9 +2,7 @@
 
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import type { AboutPageData } from "@/features/about";
-import type { ContactPageData } from "@/features/contact";
-import type { Project as ProjectType } from "@/features/projects";
+import { LazySection } from "@/components/ui/LazySection";
 
 const ServicesSection = dynamic(
   () => import("@/components/section/ServicesSection"),
@@ -34,30 +32,41 @@ const sectionFallback = (minHeight = "32rem") => (
 const DeferredHomeSections = () => {
   return (
     <>
-      <Suspense fallback={sectionFallback("28rem")}>
-        <ServicesSection />
-      </Suspense>
-      <Suspense fallback={sectionFallback("40rem")}>
-        <AboutSection
-          initialData={null}
-          standalone={false}
-          sectionId="about"
-        />
-      </Suspense>
-      <Suspense fallback={sectionFallback("42rem")}>
-        <ProjectsSection
-          initialProjects={[]}
-          standalone={false}
-          sectionId="projects"
-        />
-      </Suspense>
-      <Suspense fallback={sectionFallback("42rem")}>
-        <ContactSection
-          initialData={null}
-          standalone={false}
-          sectionId="contact"
-        />
-      </Suspense>
+      <LazySection minHeight="28rem">
+        <Suspense fallback={sectionFallback("28rem")}>
+          <ServicesSection />
+        </Suspense>
+      </LazySection>
+
+      <LazySection minHeight="40rem">
+        <Suspense fallback={sectionFallback("40rem")}>
+          <AboutSection
+            initialData={null}
+            standalone={false}
+            sectionId="about"
+          />
+        </Suspense>
+      </LazySection>
+
+      <LazySection minHeight="42rem">
+        <Suspense fallback={sectionFallback("42rem")}>
+          <ProjectsSection
+            initialProjects={[]}
+            standalone={false}
+            sectionId="projects"
+          />
+        </Suspense>
+      </LazySection>
+
+      <LazySection minHeight="42rem">
+        <Suspense fallback={sectionFallback("42rem")}>
+          <ContactSection
+            initialData={null}
+            standalone={false}
+            sectionId="contact"
+          />
+        </Suspense>
+      </LazySection>
     </>
   );
 };

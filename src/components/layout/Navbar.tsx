@@ -61,10 +61,19 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState("#home");
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState("");
 
   useEffect(() => {
     setMounted(true);
     document.documentElement.classList.add("dark");
+
+    // Fetch dynamic resume URL
+    fetch("/api/admin/resume-url")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.resumeUrl) setResumeUrl(data.resumeUrl);
+      })
+      .catch((err) => console.error("Error fetching resume URL:", err));
 
     return () => {
       document.body.style.paddingTop = "0px";
@@ -323,31 +332,34 @@ const Navbar = () => {
           </nav>
 
           {/* ── RIGHT: Resume CTA ─────────────────────────── */}
-          <motion.a
-            href="/resume.pdf"
-            download
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 380, damping: 20 }}
-            className="relative flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm font-semibold outfit overflow-hidden select-none flex-shrink-0"
-            style={{
-              background: "linear-gradient(135deg,#ef4444,#be123c)",
-              boxShadow: "0 0 20px rgba(239,68,68,0.5)",
-            }}
-          >
-            <span
-              className="absolute inset-0 rounded-full"
+          {resumeUrl && (
+            <motion.a
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05, y: -1 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 380, damping: 20 }}
+              className="relative flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm font-semibold outfit overflow-hidden select-none flex-shrink-0"
               style={{
-                background:
-                  "linear-gradient(100deg,transparent 30%,rgba(255,255,255,0.22) 50%,transparent 70%)",
-                animation: "shimmer-sweep 2.5s linear infinite",
-                animationDelay: "0.8s",
+                background: "linear-gradient(135deg,#ef4444,#be123c)",
+                boxShadow: "0 0 20px rgba(239,68,68,0.5)",
               }}
-            />
-            <FileText className="relative z-10 w-3.5 h-3.5" />
-            <span className="relative z-10  sm:inline">Resume</span>
-            <Download className="relative z-10 w-3.5 h-3.5" />
-          </motion.a>
+            >
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(100deg,transparent 30%,rgba(255,255,255,0.22) 50%,transparent 70%)",
+                  animation: "shimmer-sweep 2.5s linear infinite",
+                  animationDelay: "0.8s",
+                }}
+              />
+              <FileText className="relative z-10 w-3.5 h-3.5" />
+              <span className="relative z-10  sm:inline">Resume</span>
+              <Download className="relative z-10 w-3.5 h-3.5" />
+            </motion.a>
+          )}
         </motion.div>
       </motion.header>
     </>

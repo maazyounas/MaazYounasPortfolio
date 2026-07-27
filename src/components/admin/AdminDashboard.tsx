@@ -12,17 +12,25 @@ import {
   TrendingUp,
   TrendingDown,
   Zap,
+  FileText,
+  Upload,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import {
   Analytics,
   Project,
   Quote,
+  adminService,
 } from "../../lib/adminService";
+import { toast } from "sonner";
 
 interface AdminDashboardProps {
   analytics: Analytics;
   projects: Project[];
   quotes: Quote[];
+  resumeUrl?: string;
+  onUpdate?: () => void;
   isLoading?: boolean;
 }
 
@@ -51,9 +59,13 @@ const AdminDashboard = ({
   analytics,
   projects,
   quotes,
+  resumeUrl = "",
+  onUpdate,
   isLoading = false,
 }: AdminDashboardProps) => {
   const [todayLabel, setTodayLabel] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setTodayLabel(
@@ -65,6 +77,44 @@ const AdminDashboard = ({
       })
     );
   }, []);
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Resume size must be less than 10MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      await adminService.uploadResume(file);
+      toast.success("Resume uploaded successfully!");
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to upload resume");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleResumeDelete = async () => {
+    if (!confirm("Are you sure you want to delete your resume? This will remove the link from the navbar.")) return;
+
+    setDeleting(true);
+    try {
+      await adminService.deleteResume();
+      toast.success("Resume deleted successfully");
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete resume");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // Calculate metrics
   const activeProjects = projects.filter((p) => p.visible).length;
@@ -148,13 +198,6 @@ const AdminDashboard = ({
           <div className="glass-neon rounded-3xl border border-border/40 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-secondary/50 border-b border-border/40">
-                  <tr>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sender</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Message Snippet</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Time</th>
-                  </tr>
-                </thead>
                 <tbody className="divide-y divide-border/20">
                   {recentInquiries.length > 0 ? recentInquiries.map((iq) => (
                     <tr key={iq.id} className="hover:bg-white/5 transition-colors group">
@@ -193,46 +236,121 @@ const AdminDashboard = ({
           </div>
         </div>
 
-        {/* Project Highlights */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-bold flex items-center gap-2 px-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
-            Top Projects
-          </h3>
+        {/* Right column: Resume Management & Project Highlights */}
+        <div className="space-y-6">
+          {/* Resume Management */}
           <div className="space-y-4">
-            {popularProjects.map((p) => (
-              <motion.div
-                key={p.id}
-                whileHover={{ x: 5 }}
-                className="glass rounded-2xl p-4 border border-border/40 flex items-center gap-4 group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden relative">
-                  {p.image ? (
-                    <Image 
-                      src={p.image} 
-                      alt={p.title} 
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform" 
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <FolderKanban className="w-6 h-6 text-muted-foreground" />
+            <h3 className="text-lg font-bold flex items-center gap-2 px-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Resume Management
+            </h3>
+            <div className="glass-neon rounded-3xl p-6 border border-border/40 space-y-4">
+              {resumeUrl ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-primary/10 border border-primary/20">
+                    <FileText className="w-8 h-8 text-primary flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-bold truncate">Active Resume</p>
+                      <a 
+                        href={resumeUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline font-medium inline-flex items-center gap-1 mt-0.5"
+                      >
+                        View File
+                      </a>
                     </div>
-                  )}
+                  </div>
+                  <button
+                    disabled={deleting}
+                    onClick={handleResumeDelete}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive text-sm font-semibold transition-all"
+                  >
+                    {deleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                    Remove Resume
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold truncate">{p.title}</h4>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <Eye className="w-3 h-3" /> {p.views || 0}
-                    </span>
-                    <span className="flex items-center gap-1 text-[10px] text-primary">
-                      {p.featured ? 'Featured' : ''}
-                    </span>
+              ) : (
+                <div className="text-center py-6 border-2 border-dashed border-border/60 rounded-3xl space-y-3">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">No Resume Uploaded</p>
+                    <p className="text-xs text-muted-foreground mt-1">Upload PDF or DOC format</p>
                   </div>
                 </div>
-              </motion.div>
-            ))}
+              )}
+
+              <div className="relative">
+                <input
+                  type="file"
+                  id="resume-upload"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleResumeUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="resume-upload"
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-primary hover:bg-primary/95 text-white text-sm font-semibold cursor-pointer transition-all shadow-lg shadow-primary/20 ${uploading ? "opacity-50 pointer-events-none" : ""}`}
+                >
+                  {uploading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                  {resumeUrl ? "Upload New Version" : "Upload Resume"}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Project Highlights */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold flex items-center gap-2 px-2">
+              <Zap className="w-5 h-5 text-yellow-400" />
+              Top Projects
+            </h3>
+            <div className="space-y-4">
+              {popularProjects.map((p) => (
+                <motion.div
+                  key={p.id}
+                  whileHover={{ x: 5 }}
+                  className="glass rounded-2xl p-4 border border-border/40 flex items-center gap-4 group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden relative">
+                    {p.image ? (
+                      <Image 
+                        src={p.image} 
+                        alt={p.title} 
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform" 
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <FolderKanban className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-bold truncate">{p.title}</h4>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <Eye className="w-3 h-3" /> {p.views || 0}
+                      </span>
+                      <span className="flex items-center gap-1 text-[10px] text-primary">
+                        {p.featured ? 'Featured' : ''}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

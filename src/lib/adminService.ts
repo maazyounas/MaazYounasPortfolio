@@ -392,6 +392,13 @@ export const adminService = {
     return res.json();
   },
 
+  deleteResume: async (): Promise<void> => {
+    const res = await fetch(`${API_BASE}/resume-url`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error("Failed to delete resume");
+  },
+
   // Password Management
   changeAdminPassword: async (
     currentPassword: string,

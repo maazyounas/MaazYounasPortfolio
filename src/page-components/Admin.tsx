@@ -87,6 +87,8 @@ const Admin = () => {
                 analytics={data.analytics}
                 projects={data.projects}
                 quotes={data.quotes}
+                resumeUrl={data.securitySettings?.resumeUrl || ""}
+                onUpdate={actions.refresh}
               />
             )}
             {activeTab === "home" && data.homeData && (

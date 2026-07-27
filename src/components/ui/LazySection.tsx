@@ -16,7 +16,7 @@ export const LazySection = ({
 }: LazySectionProps) => {
   const ref = useRef<HTMLDivElement>(null);
   // Trigger load when the section is within 400px of the viewport
-  const isInView = useInView(ref, { once: true, margin });
+  const isInView = useInView(ref, { once: true, margin: margin as `${number}px ${number}px` });
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {

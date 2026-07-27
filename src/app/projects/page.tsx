@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  let data: ProjectType[] = [];
+  const data: ProjectType[] = [];
 
   // Data fetching is deferred to the client component (lazy loading)
   // to prevent large inline JSON payloads in the server response.

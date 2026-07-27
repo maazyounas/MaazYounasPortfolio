@@ -1,8 +1,11 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Layout from "../components/layout/Layout";
 import TechStackIcon from "../components/about/TechStackIcon";
 import { Code2, Database, UserCircle, MapPin, Calendar } from "lucide-react";
-import { AboutPageData } from "../lib/adminService";
+import { AboutPageData, adminService } from "../lib/adminService";
 
 interface AboutProps {
   initialData: AboutPageData | null;
@@ -11,7 +14,20 @@ interface AboutProps {
 }
 
 const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
-  const aboutData = initialData;
+  const [aboutData, setAboutData] = useState<AboutPageData | null>(initialData);
+
+  useEffect(() => {
+    if (initialData) return;
+    const fetchData = async () => {
+      try {
+        const data = await adminService.getAboutPageData();
+        setAboutData(data);
+      } catch (error) {
+        console.error("Failed to fetch about data:", error);
+      }
+    };
+    fetchData();
+  }, [initialData]);
 
   const content = (
     <>
@@ -115,7 +131,8 @@ const About = ({ initialData, standalone = true, sectionId }: AboutProps) => {
                       alt="Maaz Younas"
                       fill
                       className="object-cover"
-                      priority
+                      priority={standalone}
+                      sizes="(max-width: 768px) 256px, 320px"
                     />
                   ) : (
                     <div className="w-full h-full animate-pulse"

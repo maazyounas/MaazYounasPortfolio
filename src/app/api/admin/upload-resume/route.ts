@@ -27,13 +27,13 @@ export async function POST(request: NextRequest) {
       secure: true,
     });
 
-    // Upload with resource_type: "auto" to support PDF or DOC/DOCX
+    // Upload with resource_type: "raw" to keep PDF/DOC files binary intact
     const uploadResponse = await cloudinary.uploader.upload(base64Data, {
       folder: "resumes",
-      resource_type: "auto",
+      resource_type: "raw",
     });
 
-    const resumeUrl = uploadResponse.secure_url;
+    let resumeUrl = uploadResponse.secure_url;
 
     // Save to the admin user
     const admin = await AdminUser.findOne();
@@ -54,6 +54,11 @@ export async function POST(request: NextRequest) {
           lockoutDuration: 15,
         },
       });
+    }
+
+    // Inject fl_attachment to force download on the client side
+    if (resumeUrl && resumeUrl.includes("cloudinary.com") && !resumeUrl.includes("fl_attachment")) {
+      resumeUrl = resumeUrl.replace("/upload/", "/upload/fl_attachment/");
     }
 
     return NextResponse.json({ resumeUrl }, { status: 200 });

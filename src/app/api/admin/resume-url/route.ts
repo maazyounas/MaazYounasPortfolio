@@ -9,7 +9,14 @@ export async function GET() {
 
   try {
     const admin = await AdminUser.findOne();
-    return NextResponse.json({ resumeUrl: admin?.resumeUrl || "" }, { status: 200 });
+    let resumeUrl = admin?.resumeUrl || "";
+    
+    // Inject fl_attachment to force download on the client side
+    if (resumeUrl && resumeUrl.includes("cloudinary.com") && !resumeUrl.includes("fl_attachment")) {
+      resumeUrl = resumeUrl.replace("/upload/", "/upload/fl_attachment/");
+    }
+    
+    return NextResponse.json({ resumeUrl }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

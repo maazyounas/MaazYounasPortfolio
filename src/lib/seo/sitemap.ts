@@ -28,6 +28,18 @@ export function generateSitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/courses`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    },
+    ...["html", "css", "javascript"].map((course) => ({
+      url: `${baseUrl}/courses/${course}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 
   return staticPages;

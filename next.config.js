@@ -2,6 +2,9 @@ import bundleAnalyzer from "@next/bundle-analyzer";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Keep dev artifacts separate so `next build` cannot replace chunks used by a running dev server.
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
+
   // Core performance optimizations
   compress: true,
   productionBrowserSourceMaps: false,

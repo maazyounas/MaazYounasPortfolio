@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import {
   FileText,
   Download,
+  GraduationCap,
 } from "lucide-react";
 
 const navLinks = [
@@ -33,6 +34,12 @@ const navLinks = [
     hash: "#projects",
     label: "Projects",
     sectionId: "projects",
+  },
+  {
+    href: "/courses",
+    hash: "courses",
+    label: "Courses",
+    sectionId: "courses",
   },
   {
     href: "/#contact",
@@ -313,12 +320,15 @@ const Navbar = () => {
             }}
           >
             {navLinks.map((link) => {
-              const isActive = pathname === "/" && activeSection === link.hash;
+              const isCourseLink = link.href === "/courses";
+              const isActive = isCourseLink
+                ? pathname.startsWith("/courses")
+                : pathname === "/" && activeSection === link.hash;
               return (
                 <Link
                   key={link.hash}
                   href={link.href}
-                  onClick={(e) => handleClick(e, link.hash, link.sectionId)}
+                  onClick={isCourseLink ? undefined : (e) => handleClick(e, link.hash, link.sectionId)}
                   className="relative outfit px-4 py-1.5 rounded-full text-sm font-medium select-none transition-colors duration-150"
                   style={{
                     color: isActive ? "#fff" : "rgba(190,190,205,0.65)",
@@ -330,6 +340,18 @@ const Navbar = () => {
               );
             })}
           </nav>
+
+          <Link
+            href="/courses"
+            className="lg:hidden outfit relative px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
+            style={{
+              color: pathname.startsWith("/courses") ? "#fff" : "rgba(190,190,205,0.85)",
+              background: pathname.startsWith("/courses") ? "linear-gradient(135deg,#ef4444 0%,#9f1239 100%)" : "rgba(255,255,255,0.06)",
+            }}
+          >
+            <GraduationCap className="inline-block w-4 h-4 mr-1 align-[-3px]" />
+            Courses
+          </Link>
 
           {/* ── RIGHT: Resume CTA ─────────────────────────── */}
           {resumeUrl && (
